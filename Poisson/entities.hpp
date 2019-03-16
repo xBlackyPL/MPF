@@ -3,8 +3,10 @@ typedef struct EntityPoint {
     int y;
 } Entity;
 
-int searchForTheForce(float** vec, Entity** entity, int xAxisBound,
-                      int yAxisBound, int force, float eps);
+int searchForTheForce(float** vec, Entity** entity, Entity *heater, int xAxisBound,
+                      int yAxisBound);
+
+float getFieldValue(float** vec, int xAxisBound, int yAxisBound, int x, int y);
 
 void randomMoveEntity(Entity* entity, int xAxisBound, int yAxisBound);
 

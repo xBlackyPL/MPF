@@ -21,47 +21,40 @@ Entity* spawnEntityOnRandomPosition(int xAxisBound, int yAxisBound) {
     return newEntity;
 }
 
-int searchForTheForce(float** vec, Entity** entity, int xAxisBound,
-                      int yAxisBound, int force, float eps) {
-    if (abs(force - vec[(*entity)->x][(*entity)->y]) < eps) {
+float getFieldValue(float** vec, int xAxisBound, int yAxisBound, int x, int y) {
+    float result = 0.f;
+    if (x >= 1 && x <= xAxisBound - 2 && y >= 1 && y <= yAxisBound - 2) {
+        result = vec[x][y];
+    }
+
+    return result;
+}
+
+int searchForTheForce(float** vec, Entity** entity, Entity* heater,
+                      int xAxisBound, int yAxisBound) {
+    if ((*entity)->x == heater->x && (*entity)->y == heater->y) {
         return 0;
     }
-    float upper = 0.0f;
-    float lower = 0.0f;
-    float right = 0.0f;
-    float left = 0.0f;
 
-    upper = (*entity)->y - 1 > 1 ? vec[(*entity)->x][(*entity)->y - 1] : upper;
-    lower = (*entity)->y + 1 < yAxisBound ? vec[(*entity)->x][(*entity)->y + 1]
-                                          : lower;
-    right = (*entity)->x + 1 < xAxisBound ? vec[(*entity)->x + 1][(*entity)->y]
-                                          : right;
-    left = (*entity)->x - 1 > 1 ? vec[(*entity)->x - 1][(*entity)->y] : left;
+    float currentValue = 0.f;
+    float bestOptionValue = 0.f;
+    Entity transitionVector = {0, 0};
 
-    if (upper > lower) {
-        if (upper > vec[(*entity)->x][(*entity)->y]) {
-            (*entity)->y++;
-        }
-    } else {
-        if (lower > vec[(*entity)->x][(*entity)->y]) {
-            (*entity)->y--;
+    for (int i = -1; i < 2; ++i) {
+        for (int j = -1; j < 2; ++j) {
+            currentValue = getFieldValue(vec, xAxisBound, yAxisBound,
+                                         (*entity)->x + i, (*entity)->y + j);
+
+            if (currentValue > bestOptionValue) {
+                bestOptionValue = currentValue;
+                transitionVector.x = i;
+                transitionVector.y = j;
+            }
         }
     }
 
-    if (right > left) {
-        if (right > vec[(*entity)->x][(*entity)->y]) {
-            (*entity)->x++;
-        }
-    } else {
-        if (left > vec[(*entity)->x][(*entity)->y]) {
-            (*entity)->x--;
-        }
-    }
-
-    if (upper < eps && lower < eps && right < eps && left < eps) {
-        free(*entity);
-        *entity = spawnEntityOnRandomPosition(xAxisBound, yAxisBound);
-    }
+    (*entity)->x += transitionVector.x;
+    (*entity)->y += transitionVector.y;
 
     return 1;
 }
