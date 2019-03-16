@@ -31,7 +31,7 @@ float getFieldValue(float** vec, int xAxisBound, int yAxisBound, int x, int y) {
 }
 
 int searchForTheForce(float** vec, Entity** entity, Entity* heater,
-                      int xAxisBound, int yAxisBound) {
+                      int xAxisBound, int yAxisBound) {                          
     if ((*entity)->x == heater->x && (*entity)->y == heater->y) {
         return 0;
     }

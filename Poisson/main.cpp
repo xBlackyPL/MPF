@@ -7,8 +7,7 @@
 #include "entities.hpp"
 #include "generateImg.hpp"
 
-void laplace(float **vec, int xAxisBound, int yAxisBound, Entity *heater,
-             Entity *searcher) {
+void laplace(float **vec, int xAxisBound, int yAxisBound, Entity *heater) {
     for (int i = 1; i < xAxisBound - 1; ++i) {
         for (int j = 1; j < yAxisBound - 1; ++j) {
             if (heater->x != i && heater->y != j) {
@@ -19,8 +18,8 @@ void laplace(float **vec, int xAxisBound, int yAxisBound, Entity *heater,
     }
 }
 
-int updateBoard(float **vec, int **path, int xAxisBound, int yAxisBound, Entity *heater,
-                Entity **searcher) {
+int updateBoard(float **vec, int **path, int xAxisBound, int yAxisBound,
+                Entity *heater, Entity **searcher) {
     randomMoveEntity(heater, xAxisBound, yAxisBound);
     vec[heater->x][heater->y] = 100.f;
     int result =
@@ -29,7 +28,7 @@ int updateBoard(float **vec, int **path, int xAxisBound, int yAxisBound, Entity 
     return result;
 }
 
-void printOutputFile(float **vec, int** path, int xAxisBound, int yAxisBound) {
+void printOutputFile(float **vec, int **path, int xAxisBound, int yAxisBound) {
     FILE *output = fopen("Output.txt", "a+");
     FILE *output_path = fopen("Output_Path.txt", "a+");
 
@@ -43,17 +42,18 @@ void printOutputFile(float **vec, int** path, int xAxisBound, int yAxisBound) {
     }
     fprintf(output, "\n");
     fprintf(output_path, "\n");
-    
+
     fclose(output);
     fclose(output_path);
 }
 
-void runSimulation(float **vec, float **tmpVec, int **path, int xAxisBound, int yAxisBound,
-                   int samplingFrequency, Entity *heater, Entity **searcher) {
+void runSimulation(float **vec, float **tmpVec, int **path, int xAxisBound,
+                   int yAxisBound, int samplingFrequency, Entity *heater,
+                   Entity **searcher) {
     int index = 0;
-
     int flag = 1;
-    laplace(vec, xAxisBound, yAxisBound, heater, *searcher);
+
+    laplace(vec, xAxisBound, yAxisBound, heater);
     updateBoard(vec, path, xAxisBound, yAxisBound, heater, searcher);
 
     while (flag) {
@@ -62,11 +62,12 @@ void runSimulation(float **vec, float **tmpVec, int **path, int xAxisBound, int 
                 tmpVec[j][i] = vec[j][i];
             }
         }
-        laplace(vec, xAxisBound, yAxisBound, heater, *searcher);
+        laplace(vec, xAxisBound, yAxisBound, heater);
 
         if (index % samplingFrequency == 0) {
             printOutputFile(vec, path, xAxisBound, yAxisBound);
-            flag = updateBoard(vec, path, xAxisBound, yAxisBound, heater, searcher);
+            flag = updateBoard(vec, path, xAxisBound, yAxisBound, heater,
+                               searcher);
         }
         index++;
     }
@@ -78,31 +79,37 @@ int main() {
 
     srand(time(NULL));
 
-    float **x = (float **)calloc(xAxisBound, sizeof(float *));
-    float **xtemp = (float **)calloc(xAxisBound, sizeof(float *));
+    float **boards[2] = {(float **)calloc(xAxisBound, sizeof(float *)),
+                         (float **)calloc(xAxisBound, sizeof(float *))};
+
     int **path = (int **)calloc(xAxisBound, sizeof(int *));
 
-
-    for (int i = 0; i < xAxisBound; ++i) {
-        x[i] = (float *)calloc(yAxisBound, sizeof(float));
-        xtemp[i] = (float *)calloc(yAxisBound, sizeof(float));
-        path[i] = (int *)calloc(yAxisBound, sizeof(int));
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < xAxisBound; ++j) {
+            boards[i][j] = (float *)calloc(yAxisBound, sizeof(float));
+            boards[i][j] = (float *)calloc(yAxisBound, sizeof(float));
+            path[j] = (int *)calloc(yAxisBound, sizeof(int));
+        }
     }
 
     Entity *heater = spawnEntityOnRandomPosition(xAxisBound, yAxisBound);
     Entity *searcher = spawnEntityOnRandomPosition(xAxisBound, yAxisBound);
 
-    runSimulation(x, xtemp, path, xAxisBound, yAxisBound, 10, heater, &searcher);
+    runSimulation(boards[0], boards[1], path, xAxisBound, yAxisBound, 10,
+                  heater, &searcher);
+
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < xAxisBound; ++j) {
+            free(boards[i][j]);
+        }
+        free(boards[i]);
+    }
 
     for (int i = 0; i < xAxisBound; ++i) {
-        free(x[i]);
-        free(xtemp[i]);
         free(path[i]);
     }
 
-    free(x);
     free(path);
-    free(xtemp);
 
     return 0;
 }

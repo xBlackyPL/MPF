@@ -6,7 +6,7 @@ int *normalizeData(float **vec, int xAxisBound, int yAxisBound) {
     int *array = (int *)calloc(xAxisBound * yAxisBound, sizeof(int));
     for (int i = 0; i < xAxisBound; ++i) {
         for (int j = 0; j < yAxisBound; ++j) {
-            array[i * xAxisBound + j] = (int)(vec[i][j] * 10);
+            array[i * xAxisBound + j] = (int)(vec[i][j]);
         }
     }
     return array;
