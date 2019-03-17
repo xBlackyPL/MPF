@@ -3,8 +3,11 @@ typedef struct EntityPoint {
     int y;
 } Entity;
 
-int searchForTheForce(float** vec, Entity** entity, Entity *heater, int xAxisBound,
-                      int yAxisBound);
+int searchForTheForce(float** vec, Entity** entity, Entity* heater,
+                      int xAxisBound, int yAxisBound);
+
+int naiveForTheForce(float** vec, Entity** entity, Entity* heater,
+                     int xAxisBound, int yAxisBound);
 
 float getFieldValue(float** vec, int xAxisBound, int yAxisBound, int x, int y);
 

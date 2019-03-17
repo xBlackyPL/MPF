@@ -22,8 +22,11 @@ int updateBoard(float **vec, int **path, int xAxisBound, int yAxisBound,
                 Entity *heater, Entity **searcher) {
     randomMoveEntity(heater, xAxisBound, yAxisBound);
     vec[heater->x][heater->y] = 100.f;
+    // int result =
+    //     searchForTheForce(vec, searcher, heater, xAxisBound, yAxisBound);
+
     int result =
-        searchForTheForce(vec, searcher, heater, xAxisBound, yAxisBound);
+        naiveForTheForce(vec, searcher, heater, xAxisBound, yAxisBound);
     path[(*searcher)->x][(*searcher)->y] = 1;
     return result;
 }
@@ -70,6 +73,7 @@ void runSimulation(float **vec, float **tmpVec, int **path, int xAxisBound,
                                searcher);
         }
         index++;
+        if (index == 1000000) break;
     }
 }
 
