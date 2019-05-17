@@ -1,0 +1,36 @@
+// Peter's changes to Tomasz's original are marked with "PGL".
+
+#ifndef PSO_H
+#define PSO_H
+
+void psodummy (void (*ptfunc)());
+//float pso (float *x,int n,float (*ptfunc)(float *x,int n),int nb,float *min,float *max,float eps,int *maxiter,float *xtemp,float *ftemp);
+float pgl_pso (float *x,int n,float (*ptfunc)(float *x,int *n),int nb,float *min,float *max,float eps,int *maxiter,float *xtemp,float *ftemp); // PGL
+
+struct psobird
+{
+	int number;
+	int up;
+	float *pos;
+	float *v;
+	float *pbest;
+	float *dpos;
+	float pbesterror;
+	float pworsterror;
+	float groupbesterror;
+
+	float *groupbest;
+
+	float *pbestever;
+	float pbesterrorever;
+	float local;
+	float ssigma;	
+};
+
+//structure used to pass some info to Fortran 
+struct view
+{
+   long int cl;
+};
+
+#endif

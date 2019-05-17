@@ -1,0 +1,26 @@
+Simplified version of my implementation of BBPSO.
+
+It needs GSL (GNU Scientific Library) to be installed.
+(download,./configure;make;make install).
+
+For more information about my code see comments in an example code (main.c).
+To make everything you need to make library (make lib) and then example (make example).
+
+To make libpso type: 
+
+make lib
+
+To make a simple but interesting example type:
+
+make example  
+
+To make example with fortran target function type:
+
+make example2
+
+To make example with fortran function used by C library 
+in fortran progam (uff..) type:
+
+make example3
+
+
